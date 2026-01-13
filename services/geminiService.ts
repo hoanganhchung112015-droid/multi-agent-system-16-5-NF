@@ -20,7 +20,7 @@ const getCacheKey = (subject: string, agent: string, input: string, imageHash: s
 // 1. Dùng đúng tên class đã import: GoogleGenerativeAI
 // 2. Truyền trực tiếp API Key vào (không bỏ trong object)
 // 3. Nếu dùng Vite, hãy dùng import.meta.env
-const apiKey = import.meta.env.GEMINI_API_KEY; 
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY; 
 
 if (!apiKey) {
   console.error("API Key không tồn tại! Hãy kiểm tra file .env hoặc cấu hình Netlify.");
