@@ -1,26 +1,30 @@
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
 import { Subject, AgentType } from "../types";
 import React from 'react';
 
-// CẤU HÌNH MODEL - Tối ưu cho tốc độ và hiệu năng
+// CẤU HÌNH MODEL - Lưu ý: Hiện tại bản ổn định là gemini-1.5-flash
+// (Nếu bạn có quyền truy cập sớm bản 2.0/2.5 thì giữ nguyên, nếu không hãy dùng 1.5)
 const MODEL_CONFIG = {
-  TEXT: 'gemini-2.5-flash',
-  TTS: 'gemini-2.5-flash-tts',
-  TIMEOUT: 15000 // 15s timeout
+  TEXT: 'gemini-1.5-flash', 
+  TTS: 'gemini-1.5-flash-tts',
+  TIMEOUT: 15000 
 };
 
-// CACHING LAYER - "Siêu Tốc Độ"
-// Lưu trữ kết quả đã xử lý để không phải gọi lại API
 const cache = new Map<string, string>();
 const audioCache = new Map<string, string>();
 
 const getCacheKey = (subject: string, agent: string, input: string, imageHash: string = '') => 
   `${subject}|${agent}|${input.trim()}|${imageHash}`;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// --- SỬA TẠI ĐÂY ---
+// 1. Dùng đúng tên class đã import: GoogleGenerativeAI
+// 2. Truyền trực tiếp API Key vào (không bỏ trong object)
+// 3. Nếu dùng Vite, hãy dùng import.meta.env
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY; 
 
+if (!apiKey) {
+  console.error("API Key không tồn tại! Hãy kiểm tra file .env hoặc cấu hình Netlify.");
+}
 const SYSTEM_PROMPTS: Record<AgentType, string> = {
   [AgentType.SPEED]: `Bạn là chuyên gia giải đề thi.
     NHIỆM VỤ: Trả về một đối tượng JSON với hai trường: "finalAnswer" và "casioSteps".
